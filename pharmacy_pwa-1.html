@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pharmacy App (PWA)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a3d62">
+  <style>
+    body { font-family: sans-serif; margin: 20px; background: #f2f2f2; }
+    h2 { color: #0a3d62; }
+    input, button { padding: 8px; margin: 5px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 15px; background: #fff; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+  <h2>Pharmacy Medicine Manager</h2>
+
+  <input type="text" id="name" placeholder="Medicine Name">
+  <input type="number" id="price" placeholder="Price">
+  <input type="number" id="qty" placeholder="Quantity">
+  <button onclick="addMedicine()">Add</button>
+
+  <h3>Stock List</h3>
+  <table id="medicineTable">
+    <thead>
+      <tr>
+        <th>Name</th><th>Price</th><th>Qty</th><th>Sell</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+
+    let medicines = JSON.parse(localStorage.getItem('medicines') || '[]');
+
+    function addMedicine() {
+      const name = document.getElementById('name').value;
+      const price = parseFloat(document.getElementById('price').value);
+      const qty = parseInt(document.getElementById('qty').value);
+
+      if (!name || isNaN(price) || isNaN(qty)) return alert("Please fill all fields");
+
+      medicines.push({ name, price, qty });
+      localStorage.setItem('medicines', JSON.stringify(medicines));
+      updateTable();
+
+      document.getElementById('name').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('qty').value = '';
+    }
+
+    function sell(index) {
+      if (medicines[index].qty > 0) {
+        medicines[index].qty -= 1;
+        localStorage.setItem('medicines', JSON.stringify(medicines));
+        updateTable();
+      } else {
+        alert("Out of Stock");
+      }
+    }
+
+    function updateTable() {
+      const table = document.querySelector("#medicineTable tbody");
+      table.innerHTML = "";
+      medicines.forEach((med, index) => {
+        table.innerHTML += `
+          <tr>
+            <td>${med.name}</td>
+            <td>${med.price}</td>
+            <td>${med.qty}</td>
+            <td><button onclick="sell(${index})">Sell</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    updateTable();
+  </script>
+</body>
+</html>

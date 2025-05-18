@@ -1,0 +1,14 @@
+
+{
+  "name": "Pharmacy App",
+  "short_name": "Pharmacy",
+  "start_url": "pharmacy_pwa.html",
+  "display": "standalone",
+  "background_color": "#f2f2f2",
+  "theme_color": "#0a3d62",
+  "icons": [{
+    "src": "https://cdn-icons-png.flaticon.com/512/3062/3062634.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
+}
